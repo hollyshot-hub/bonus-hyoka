@@ -1,0 +1,595 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>賞与評価</title>
+<style>
+:root{
+  --bg:#f4f5f2;--card:#fff;--ink:#1e2320;--sub:#6a736d;--line:#dde2dd;--accent:#2f6b4f;--accent-ink:#fff;
+  --soft:#e9f1ec;--warn:#b3412c;--warn-soft:#fbe9e5;--focus:#2f6b4f55;
+  --rS:#8a5a00;--rSb:#fff0c7;--rA:#2f6b4f;--rAb:#dff0e6;--rB:#2d5a8a;--rBb:#e0ebf7;--rC:#6f4f86;--rCb:#eee4f4;--rD:#9a3a28;--rDb:#f7e1dc;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#121514;--card:#1c201e;--ink:#e7ebe8;--sub:#99a29c;--line:#30362f;--accent:#62b089;--accent-ink:#0c1a12;
+  --soft:#1f2e27;--warn:#e47c64;--warn-soft:#3a201b;--focus:#62b08966;
+  --rS:#f2c14e;--rSb:#3a2e10;--rA:#7cc99f;--rAb:#1c3427;--rB:#86b4e6;--rBb:#1b2a3d;--rC:#c7a3e0;--rCb:#2e2238;--rD:#ef8f7a;--rDb:#3a1f19;
+}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP",Meiryo,sans-serif;font-size:16px;line-height:1.6;-webkit-text-size-adjust:100%}
+button,input,select,textarea{font:inherit;color:inherit}
+header.top{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--line);padding:10px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+header.top .ttl{font-weight:700;font-size:17px}
+header.top .who{color:var(--sub);font-size:13px}
+header.top .sp{flex:1}
+main{max-width:860px;margin:0 auto;padding:16px}
+main.narrow{max-width:560px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:14px}
+h1{font-size:22px;margin:0 0 4px}h2{font-size:18px;margin:0 0 12px}h3{font-size:15px;margin:0 0 8px}
+.sub{color:var(--sub);font-size:14px;margin:0}
+.btn{appearance:none;border:1px solid var(--line);background:var(--card);border-radius:10px;padding:9px 14px;cursor:pointer;font-size:15px;white-space:nowrap}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
+.btn.danger{color:var(--warn);border-color:var(--warn)}
+.btn.small{padding:5px 10px;font-size:13px}
+.btn.wide{width:100%;padding:13px;font-size:16px;margin-top:12px}
+.btn:disabled{opacity:.5;cursor:default}
+input[type=text],input[type=password],input[type=search],select,textarea{width:100%;border:1px solid var(--line);background:var(--card);border-radius:10px;padding:10px 12px;font-size:16px}
+input:focus,select:focus,textarea:focus,.btn:focus-visible{outline:3px solid var(--focus);outline-offset:1px}
+label.lb{display:block;font-size:13px;color:var(--sub);margin:10px 0 4px}
+.center{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px}
+.login{width:100%;max-width:360px;text-align:center}
+.login form{margin-top:16px}
+.err{color:var(--warn);font-size:14px;margin:10px 0 0}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.row>*{flex:1;min-width:140px}
+.row>.btn{flex:0 0 auto;min-width:0}
+.list{display:flex;flex-direction:column;gap:8px}
+.emp{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;cursor:pointer;text-align:left;width:100%}
+.emp:hover{border-color:var(--accent)}
+.emp.off{cursor:default;opacity:.6}.emp.off:hover{border-color:var(--line)}
+.emp .nm{font-weight:700}.emp .wp{color:var(--sub);font-size:13px}
+.emp .grow{flex:1;min-width:0}
+.badge{display:inline-block;font-size:12px;padding:3px 9px;border-radius:999px;background:var(--soft);color:var(--accent);font-weight:700;white-space:nowrap}
+.badge.gray{background:var(--bg);color:var(--sub);border:1px solid var(--line)}
+.badge.warn{background:var(--warn-soft);color:var(--warn)}
+.rk{display:inline-flex;align-items:center;justify-content:center;font-weight:800;border-radius:8px;min-width:30px;height:30px;padding:0 6px}
+.rk.S{color:var(--rS);background:var(--rSb)}.rk.A{color:var(--rA);background:var(--rAb)}.rk.B{color:var(--rB);background:var(--rBb)}.rk.C{color:var(--rC);background:var(--rCb)}.rk.D{color:var(--rD);background:var(--rDb)}
+.rk.big{font-size:44px;min-width:84px;height:84px;border-radius:18px}
+.item{border-top:1px solid var(--line);padding:14px 0}
+.item:first-of-type{border-top:0;padding-top:4px}
+.item .hd{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.item .no{color:var(--accent);font-weight:800}
+.item .nm{font-weight:700}
+.item .mx{color:var(--sub);font-size:13px}
+.item .ds{color:var(--sub);font-size:14px;margin:2px 0 8px}
+.item.missing select{border-color:var(--warn);background:var(--warn-soft)}
+.ded .pt{color:var(--warn);font-size:13px;font-weight:700}
+.summary{display:flex;align-items:center;gap:18px}
+.summary .tot{font-size:38px;font-weight:800;line-height:1}
+.summary .tot small{font-size:16px;font-weight:600;color:var(--sub);margin-left:2px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
+th{color:var(--sub);font-weight:600;font-size:12px;white-space:nowrap}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+tr.zero td{color:var(--sub)}
+tr.sum td{font-weight:800;border-bottom:0}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.scroll table{min-width:640px}
+tr.click{cursor:pointer}tr.click:hover td{background:var(--soft)}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px}
+.tab{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:7px 14px;cursor:pointer;white-space:nowrap;font-size:14px}
+.tab.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:700}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:8px}
+.stat{background:var(--bg);border-radius:10px;padding:10px;text-align:center}
+.stat b{display:block;font-size:22px}
+.stat span{font-size:12px;color:var(--sub)}
+.back{background:none;border:0;color:var(--accent);cursor:pointer;padding:0;margin-bottom:10px;font-size:15px}
+.note{font-size:13px;color:var(--sub);background:var(--bg);border-radius:10px;padding:10px 12px;margin:10px 0}
+.scale{display:flex;gap:6px;flex-wrap:wrap;font-size:12px;color:var(--sub);margin-top:10px}
+.scale span{display:inline-flex;align-items:center;gap:4px}
+.scale .rk{min-width:22px;height:22px;font-size:12px}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:11px 18px;border-radius:12px;font-size:14px;max-width:calc(100% - 32px);z-index:50;opacity:0;pointer-events:none;transition:opacity .2s}
+#toast.show{opacity:1}#toast.bad{background:var(--warn);color:#fff}
+.modal{position:fixed;inset:0;background:#0007;z-index:40;display:flex;align-items:flex-start;justify-content:center;padding:24px 12px;overflow:auto}
+.modal .card{max-width:760px;width:100%;margin:0}
+.loading{padding:60px 16px;text-align:center;color:var(--sub)}
+.muted{color:var(--sub)}
+.mt{margin-top:12px}
+@media (max-width:520px){.summary .tot{font-size:32px}.rk.big{font-size:36px;min-width:70px;height:70px}}
+</style>
+</head>
+<body>
+<div id="app"><div class="loading">読み込み中…</div></div>
+<div id="toast"></div>
+<script>
+// ===================== 設定（デプロイ時に書き換え） =====================
+const SUPABASE_URL = 'https://wlmomylacenzgtvcoxlb.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndsbW9teWxhY2Vuemd0dmNveGxiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODExNzE2MjUsImV4cCI6MjA5Njc0NzYyNX0.ld1XMUXd2tfU5AxdbTTcbTk5VZJ0UfcRI8FFDy9ALCc';
+// 置換されたかどうかは「https:// で始まるか」で判定（置換文字列そのものとは比較しない）
+const CONFIGURED = SUPABASE_URL.startsWith('https://');
+
+// ===================== 評価基準 =====================
+const ITEMS = [
+  {name:'勤務姿勢・責任感', max:15, desc:'遅刻や欠勤の回数、責任を持って業務を遂行しているか'},
+  {name:'衛生・安全管理',   max:20, desc:'HACCPや衛生ルール・事故防止・安全作業を徹底しているか'},
+  {name:'業務遂行能力',     max:20, desc:'調理技術、正確性、作業効率、時間管理が適切であるか'},
+  {name:'協調性',           max:15, desc:'周囲と協力し、円滑な職場づくりに取り組んでいるか'},
+  {name:'顧客対応',         max:10, desc:'学校・園・施設等への対応が適切であるか'},
+  {name:'コスト意識',       max:10, desc:'消耗品・時間・ロスの削減を意識している'},
+  {name:'改善・会社貢献',   max:10, desc:'業務改善・積極的な応援業務・会社方針への協力がある'},
+];
+const DEDS = [
+  {name:'本人都合による遅刻・欠勤', pt:2},
+  {name:'無断欠勤・連絡手順を守らない欠勤', pt:10},
+  {name:'手洗い・温度管理・記録に関する違反', pt:2},
+  {name:'異物混入・食中毒に繋がりうる重大不備', pt:10},
+  {name:'本人の対応・行為によるクレーム', pt:2},
+  {name:'事故・トラブル・欠員等の必要な報告を怠った', pt:10},
+  {name:'服務規律・安全手順・社内ルール等への違反', pt:5},
+  {name:'改善指導後に同じ問題を起こした', pt:10},
+];
+const ROLES = {manager:'マネージャー', jicho:'次長', jigyobu:'事業部'};
+const ROLE_ORDER = ['manager','jicho','jigyobu'];
+
+function calc(items, ded){
+  const plus = items.reduce((a,b)=>a+Number(b),0);
+  const minus = (ded||[]).reduce((a,c,i)=>a+Number(c)*DEDS[i].pt,0);
+  const total = Math.max(0, Math.round((plus-minus)*10)/10);
+  const rank = total>=90?'S':total>=80?'A':total>=70?'B':total>=60?'C':'D';
+  return {plus, minus, total, rank};
+}
+const f1 = n => (Math.round(Number(n)*10)/10).toFixed(1);
+
+// ===================== 共通 =====================
+const $app = document.getElementById('app');
+const st = {pass:null, mode:null, ev:null, list:null, q:'', wp:'', adm:null, admTab:'eval', admPeriod:null, aq:'', awp:'', ast:''};
+function save(){ try{ sessionStorage.setItem('bonus_s', JSON.stringify({pass:st.pass, mode:st.mode, ev:st.ev})); }catch(e){} }
+function load(){ try{ const o = JSON.parse(sessionStorage.getItem('bonus_s')||'null'); if(o){ st.pass=o.pass; st.mode=o.mode; st.ev=o.ev; } }catch(e){} }
+function logout(){ st.pass=st.mode=st.ev=st.list=st.adm=null; try{ sessionStorage.removeItem('bonus_s'); }catch(e){} showLogin(); }
+function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+const $ = id => document.getElementById(id);
+let toastTimer;
+function toast(msg, bad){ const t=$('toast'); t.textContent=msg; t.className='show'+(bad?' bad':''); clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.className='', 3200); }
+function loading(){ $app.innerHTML = '<div class="loading">読み込み中…</div>'; }
+
+async function rpc(fn, args){
+  const headers = {'Content-Type':'application/json', apikey:SUPABASE_ANON_KEY};
+  if (SUPABASE_ANON_KEY.startsWith('eyJ')) headers.Authorization = 'Bearer ' + SUPABASE_ANON_KEY;
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${fn}`, {method:'POST', headers, body:JSON.stringify(args||{})});
+  const text = await r.text();
+  let data = null; try{ data = text ? JSON.parse(text) : null; }catch(e){ data = text; }
+  if (!r.ok){ const e = new Error((data && data.message) || r.statusText || 'ERROR'); e.code = data && data.message; throw e; }
+  return data;
+}
+function errMsg(e){
+  const m = (e && e.message) || '';
+  const map = {
+    AUTH:'パスワードが違います', NOT_INITIALIZED:'初期設定が完了していません（SQL未実行）',
+    NO_EVALUATOR:'評価者が見つかりません。選び直してください', NO_PERIOD:'評価期間が設定されていません',
+    NO_EMPLOYEE:'対象者が見つかりません', BAD_INPUT:'入力内容を確認してください',
+    LOCKED:'3名の評価が完了しているため変更できません', TAKEN:'この対象者は同じ役職の別の評価者が評価済みです',
+    PW_SHORT:'パスワードは6文字以上にしてください', PW_SAME:'評価者用と管理者用に同じパスワードは使えません',
+  };
+  if (map[m]) return map[m];
+  if (/Failed to fetch|NetworkError/i.test(m)) return '通信できませんでした。電波状況を確認してください';
+  if (/duplicate key/i.test(m)) return '同じ名前がすでに登録されています';
+  if (/check constraint/i.test(m)) return '入力内容を確認してください（範囲外の値があります）';
+  return 'エラーが発生しました：' + m;
+}
+async function guard(fn){
+  try{ await fn(); }
+  catch(e){
+    if (e.message==='AUTH'){ logout(); toast('再度ログインしてください', true); return; }
+    if (e.message==='NO_EVALUATOR'){ st.ev=null; save(); toast(errMsg(e), true); showPick(); return; }
+    toast(errMsg(e), true); console.error(e);
+  }
+}
+function scaleHTML(){ return `<div class="scale">${[['S','90点以上'],['A','80〜89'],['B','70〜79'],['C','60〜69'],['D','59以下']].map(([r,t])=>`<span><b class="rk ${r}">${r}</b>${t}</span>`).join('')}</div>`; }
+
+// ===================== ログイン =====================
+function showLogin(msg){
+  $app.innerHTML = `<div class="center"><div class="card login">
+    <h1>賞与評価</h1><p class="sub">パスワードを入力してください</p>
+    <form id="f"><input type="password" id="pw" autocomplete="current-password" placeholder="パスワード" required>
+    <button class="btn primary wide" id="lg">ログイン</button></form>
+    ${msg?`<p class="err">${esc(msg)}</p>`:''}</div></div>`;
+  $('pw').focus();
+  $('f').onsubmit = async ev=>{
+    ev.preventDefault(); const pw = $('pw').value; $('lg').disabled = true;
+    try{
+      const r = await rpc('bonus_login', {p_pass:pw});
+      st.pass = pw; st.mode = r.mode; st.ev = null; save();
+      r.mode==='admin' ? showAdmin() : showPick();
+    }catch(e){ showLogin(errMsg(e)); }
+  };
+}
+
+// ===================== 評価者：名前選択 =====================
+function topBar(){
+  return `<header class="top"><span class="ttl">賞与評価</span>
+    ${st.ev?`<span class="who">${esc(st.ev.name)}（${ROLES[st.ev.role]}）</span>`:''}<span class="sp"></span>
+    ${st.ev?`<button class="btn small" id="chg">評価者を変更</button>`:''}
+    <button class="btn small" id="out">ログアウト</button></header>`;
+}
+function bindTop(){
+  $('out').onclick = logout;
+  if ($('chg')) $('chg').onclick = ()=>{ st.ev=null; st.list=null; save(); showPick(); };
+}
+function showPick(){ guard(async()=>{
+  loading();
+  const evs = await rpc('bonus_user_evaluators', {p_pass:st.pass});
+  $app.innerHTML = topBar() + `<main class="narrow"><div class="card">
+    <h2>評価者を選択</h2><p class="sub">あなたの名前を選んでください</p>
+    <label class="lb" for="evsel">評価者</label>
+    <select id="evsel"><option value="">選択してください</option>
+      ${ROLE_ORDER.map(r=>{ const g = evs.filter(e=>e.role===r); return g.length?`<optgroup label="${ROLES[r]}">${g.map(e=>`<option value="${e.id}">${esc(e.name)}</option>`).join('')}</optgroup>`:''; }).join('')}
+    </select>
+    ${evs.length?'':'<p class="err">評価者が登録されていません。管理者に連絡してください。</p>'}
+    <button class="btn primary wide" id="go">この名前で進む</button></div></main>`;
+  bindTop();
+  $('go').onclick = ()=>{
+    const id = Number($('evsel').value); const e = evs.find(x=>x.id===id);
+    if(!e){ toast('評価者を選択してください', true); return; }
+    st.ev = {id:e.id, name:e.name, role:e.role}; save(); showList();
+  };
+});}
+
+// ===================== 評価者：対象者一覧 =====================
+function showList(refresh=true){ guard(async()=>{
+  if (refresh || !st.list){ loading(); st.list = await rpc('bonus_user_list', {p_pass:st.pass, p_evaluator:st.ev.id}); }
+  const L = st.list;
+  if (!L.period){
+    $app.innerHTML = topBar() + `<main class="narrow"><div class="card"><h2>評価期間が設定されていません</h2><p class="sub">管理者に連絡してください。</p></div></main>`;
+    bindTop(); return;
+  }
+  const wps = [...new Set(L.employees.map(e=>e.workplace).filter(Boolean))];
+  const done = L.employees.filter(e=>e.mine).length;
+  const fixed = L.employees.filter(e=>e.result).length;
+  $app.innerHTML = topBar() + `<main>
+    <div class="card"><h2>${esc(L.period.name)}</h2>
+      <p class="sub">対象者を選んで評価を入力してください。自分が評価した対象者は、3名（マネージャー・次長・事業部）の評価が揃うと結果を閲覧できます。</p>
+      <div class="stats mt"><div class="stat"><b>${done}</b><span>入力済み</span></div><div class="stat"><b>${fixed}</b><span>結果確定</span></div></div>
+    </div>
+    <div class="row" style="margin-bottom:12px">
+      <input type="search" id="q" placeholder="名前で検索" value="${esc(st.q)}">
+      ${wps.length?`<select id="wp"><option value="">すべての事業所</option>${wps.map(w=>`<option ${w===st.wp?'selected':''}>${esc(w)}</option>`).join('')}</select>`:''}
+    </div>
+    <div class="list" id="rows"></div></main>`;
+  bindTop();
+  $('q').oninput = e=>{ st.q = e.target.value; renderRows(); };
+  if ($('wp')) $('wp').onchange = e=>{ st.wp = e.target.value; renderRows(); };
+  renderRows();
+});}
+function renderRows(){
+  const L = st.list, q = st.q.trim();
+  const rows = L.employees.filter(e=>(!q || e.name.includes(q)) && (!st.wp || e.workplace===st.wp));
+  $('rows').innerHTML = rows.length ? rows.map(e=>{
+    let right;
+    if (e.result){ const c = calc(e.result.items, e.result.ded); right = `<span class="muted" style="font-size:14px">${f1(c.total)}点</span><b class="rk ${c.rank}">${c.rank}</b>`; }
+    else if (e.mine) right = `<span class="badge">入力済・他の評価待ち</span>`;
+    else if (e.taken) right = `<span class="badge gray">他の${ROLES[L.role]}が担当</span>`;
+    else right = `<span class="badge warn">未入力</span>`;
+    return `<button class="emp ${e.taken&&!e.mine?'off':''}" data-id="${e.id}"><span class="grow"><span class="nm">${esc(e.name)}</span><br><span class="wp">${esc(e.workplace||'')}</span></span>${right}</button>`;
+  }).join('') : '<p class="muted">該当する対象者がいません</p>';
+  $('rows').querySelectorAll('.emp').forEach(b=>b.onclick = ()=>{
+    const e = L.employees.find(x=>x.id===Number(b.dataset.id));
+    if (e.result) showResult(e);
+    else if (e.taken && !e.mine) toast(`この対象者は他の${ROLES[L.role]}が評価しています`);
+    else showForm(e);
+  });
+}
+
+// ===================== 評価者：入力フォーム =====================
+function showForm(emp){ guard(async()=>{
+  loading();
+  const mine = await rpc('bonus_user_get', {p_pass:st.pass, p_evaluator:st.ev.id, p_employee:emp.id});
+  const isJ = st.ev.role === 'jigyobu';
+  const sv = i => mine ? mine.s[i] : '';
+  const dv = i => mine ? mine.d[i] : 0;
+  $app.innerHTML = topBar() + `<main class="narrow">
+    <button class="back" id="bk">← 対象者一覧へ戻る</button>
+    <div class="card"><h2 style="margin:0">${esc(emp.name)}</h2><p class="sub">${esc(emp.workplace||'')}　/　${esc(st.list.period.name)}</p>
+      ${mine?'<div class="note">入力済みの内容を修正しています。3名の評価が揃うまでは修正できます。</div>':''}
+    </div>
+    <div class="card"><h2>加点項目 <span class="muted" style="font-size:13px;font-weight:400">（100点満点）</span></h2>
+      ${ITEMS.map((it,i)=>`<div class="item" id="it${i}"><div class="hd"><span class="no">${i+1}</span><span class="nm">${it.name}</span><span class="mx">配点 ${it.max}点</span></div>
+        <div class="ds">${it.desc}</div>
+        <select id="s${i}" aria-label="${it.name}"><option value="">— 点数を選択 —</option>
+          ${Array.from({length:it.max+1},(_,n)=>it.max-n).map(n=>`<option value="${n}" ${String(sv(i))===String(n)?'selected':''}>${n} 点</option>`).join('')}
+        </select></div>`).join('')}
+    </div>
+    ${isJ?`<div class="card ded"><h2>減点項目 <span class="muted" style="font-size:13px;font-weight:400">（事業部のみ入力）</span></h2>
+      ${DEDS.map((d,i)=>`<div class="item"><div class="hd"><span class="nm">${d.name}</span><span class="pt">1回につき −${d.pt}点</span></div>
+        <select id="d${i}" aria-label="${d.name}" style="margin-top:6px">${Array.from({length:10},(_,n)=>`<option value="${n}" ${Number(dv(i))===n?'selected':''}>${n===0?'なし':n+' 回'}</option>`).join('')}</select></div>`).join('')}
+    </div>`:''}
+    <button class="btn primary wide" id="sub">入力完了</button>
+    <p class="sub" style="text-align:center;margin-top:8px">結果は3名の評価が揃った後に表示されます</p>
+  </main>`;
+  bindTop();
+  $('bk').onclick = ()=>showList(false);
+  ITEMS.forEach((_,i)=>$('s'+i).onchange = ()=>$('it'+i).classList.remove('missing'));
+  $('sub').onclick = ()=>guard(async()=>{
+    const s = ITEMS.map((_,i)=>$('s'+i).value);
+    const miss = s.findIndex(v=>v==='');
+    if (miss >= 0){
+      s.forEach((v,i)=>{ if(v==='') $('it'+i).classList.add('missing'); });
+      $('it'+miss).scrollIntoView({behavior:'smooth', block:'center'});
+      toast('未選択の項目があります', true); return;
+    }
+    const d = isJ ? DEDS.map((_,i)=>Number($('d'+i).value)) : [0,0,0,0,0,0,0,0];
+    if (!confirm(`${emp.name} さんの評価を登録します。よろしいですか？`)) return;
+    $('sub').disabled = true;
+    try{
+      const res = await rpc('bonus_user_submit', {p_pass:st.pass, p_evaluator:st.ev.id, p_employee:emp.id, p_s:s.map(Number), p_d:d});
+      if (res){ toast('3名の評価が揃いました'); showResult({...emp, result:res}); st.list = null; }
+      else { toast('入力しました。3名の評価が揃うと結果が表示されます'); showList(); }
+    } finally { if ($('sub')) $('sub').disabled = false; }
+  });
+});}
+
+// ===================== 評価者：結果表示 =====================
+function resultBody(res){
+  const c = calc(res.items, res.ded);
+  return `<div class="card"><div class="summary"><b class="rk big ${c.rank}">${c.rank}</b>
+      <div><div class="tot">${f1(c.total)}<small>点</small></div><p class="sub">加点 ${f1(c.plus)}点　減点 −${c.minus}点</p></div></div>${scaleHTML()}</div>
+    <div class="card"><h3>加点項目（3名の平均）</h3><table><thead><tr><th>項目</th><th class="n">配点</th><th class="n">平均点</th></tr></thead><tbody>
+      ${ITEMS.map((it,i)=>`<tr><td>${it.name}</td><td class="n">${it.max}</td><td class="n">${f1(res.items[i])}</td></tr>`).join('')}
+      <tr class="sum"><td>加点 合計</td><td class="n">100</td><td class="n">${f1(c.plus)}</td></tr></tbody></table></div>
+    <div class="card"><h3>減点項目</h3><table><thead><tr><th>項目</th><th class="n">回数</th><th class="n">減点</th></tr></thead><tbody>
+      ${DEDS.map((d,i)=>{ const n = Number((res.ded||[])[i]||0); return `<tr class="${n?'':'zero'}"><td>${d.name}<br><span class="muted" style="font-size:12px">1回 −${d.pt}点</span></td><td class="n">${n}回</td><td class="n">${n?'−'+n*d.pt:'0'}</td></tr>`; }).join('')}
+      <tr class="sum"><td>減点 合計</td><td></td><td class="n">−${c.minus}</td></tr></tbody></table></div>`;
+}
+function showResult(emp){
+  $app.innerHTML = topBar() + `<main class="narrow"><button class="back" id="bk">← 対象者一覧へ戻る</button>
+    <div class="card"><h2 style="margin:0">${esc(emp.name)}</h2><p class="sub">${esc(emp.workplace||'')}　/　評価結果（確定）</p></div>
+    ${resultBody(emp.result)}</main>`;
+  bindTop();
+  $('bk').onclick = ()=>showList(true);
+  window.scrollTo(0,0);
+}
+
+// ===================== 管理者 =====================
+function showAdmin(){ guard(async()=>{
+  loading();
+  st.adm = await rpc('bonus_admin_data', {p_admin:st.pass, p_period:st.admPeriod});
+  st.admPeriod = st.adm.period_id;
+  renderAdmin();
+});}
+function admResults(){
+  const A = st.adm; const evName = id => (A.evaluators.find(x=>x.id===id)||{}).name || '?';
+  return A.employees.map(emp=>{
+    const evs = A.evaluations.filter(v=>v.employee_id===emp.id);
+    const by = {}; evs.forEach(v=>by[v.role] = {...v, evaluator:evName(v.evaluator_id)});
+    const complete = ROLE_ORDER.every(r=>by[r]);
+    let res = null, c = null;
+    if (complete){
+      res = {items: ITEMS.map((_,i)=>ROLE_ORDER.reduce((a,r)=>a+by[r].s[i],0)/3), ded: by.jigyobu.d};
+      c = calc(res.items, res.ded);
+    }
+    return {emp, by, complete, res, c, count:evs.length};
+  }).filter(x=>x.emp.active || x.count);
+}
+function renderAdmin(){
+  const A = st.adm;
+  const tabs = [['eval','評価状況'],['emp','社員'],['evr','評価者'],['per','評価期間'],['set','設定']];
+  $app.innerHTML = `<header class="top"><span class="ttl">賞与評価　管理</span><span class="sp"></span><button class="btn small" id="out">ログアウト</button></header>
+    <main><div class="tabs">${tabs.map(([k,t])=>`<button class="tab ${st.admTab===k?'on':''}" data-t="${k}">${t}</button>`).join('')}</div><div id="pane"></div></main>`;
+  $('out').onclick = logout;
+  document.querySelectorAll('.tab').forEach(b=>b.onclick = ()=>{ st.admTab = b.dataset.t; renderAdmin(); });
+  ({eval:admEval, emp:admEmp, evr:admEvr, per:admPer, set:admSet})[st.admTab]();
+}
+
+function admEval(){
+  const A = st.adm; const R = admResults();
+  const active = R.filter(x=>x.emp.active);
+  const fixed = active.filter(x=>x.complete);
+  const dist = {S:0,A:0,B:0,C:0,D:0}; fixed.forEach(x=>dist[x.c.rank]++);
+  const wps = [...new Set(R.map(x=>x.emp.workplace).filter(Boolean))];
+  const pname = (A.periods.find(p=>p.id===A.period_id)||{}).name || '（期間なし）';
+  $('pane').innerHTML = `<div class="card">
+      <div class="row"><select id="per">${A.periods.map(p=>`<option value="${p.id}" ${p.id===A.period_id?'selected':''}>${esc(p.name)}${p.id===A.active_period_id?'（現在の期間）':''}</option>`).join('')}</select>
+        <button class="btn" id="csv">結果をCSV出力</button></div>
+      <div class="stats mt"><div class="stat"><b>${fixed.length}/${active.length}</b><span>確定</span></div>
+        ${Object.entries(dist).map(([r,n])=>`<div class="stat"><b class="rk ${r}" style="font-size:14px">${r}</b><b>${n}</b></div>`).join('')}</div></div>
+    <div class="row" style="margin-bottom:12px"><input type="search" id="aq" placeholder="名前で検索" value="${esc(st.aq)}">
+      ${wps.length?`<select id="awp"><option value="">すべての事業所</option>${wps.map(w=>`<option ${w===st.awp?'selected':''}>${esc(w)}</option>`).join('')}</select>`:''}
+      <select id="ast"><option value="">すべての状況</option><option value="done" ${st.ast==='done'?'selected':''}>確定のみ</option><option value="todo" ${st.ast==='todo'?'selected':''}>未完了のみ</option></select></div>
+    <div class="card scroll" style="padding:8px 12px"><table><thead><tr><th>氏名</th><th>事業所</th>${ROLE_ORDER.map(r=>`<th>${ROLES[r]}</th>`).join('')}<th class="n">合計</th><th>ランク</th></tr></thead><tbody id="arows"></tbody></table></div>`;
+  $('per').onchange = e=>{ st.admPeriod = Number(e.target.value); showAdmin(); };
+  $('aq').oninput = e=>{ st.aq = e.target.value; draw(); };
+  if ($('awp')) $('awp').onchange = e=>{ st.awp = e.target.value; draw(); };
+  $('ast').onchange = e=>{ st.ast = e.target.value; draw(); };
+  $('csv').onclick = ()=>exportCSV(R, pname);
+  function draw(){
+    const q = st.aq.trim();
+    const rows = R.filter(x=>(!q||x.emp.name.includes(q)) && (!st.awp||x.emp.workplace===st.awp) && (!st.ast||(st.ast==='done')===x.complete));
+    $('arows').innerHTML = rows.map(x=>`<tr class="click" data-id="${x.emp.id}"><td><b>${esc(x.emp.name)}</b>${x.emp.active?'':' <span class="badge gray">無効</span>'}</td><td>${esc(x.emp.workplace)}</td>
+      ${ROLE_ORDER.map(r=>`<td>${x.by[r]?esc(x.by[r].evaluator):'<span class="muted">未</span>'}</td>`).join('')}
+      <td class="n">${x.complete?f1(x.c.total):'—'}</td><td>${x.complete?`<b class="rk ${x.c.rank}">${x.c.rank}</b>`:''}</td></tr>`).join('') || `<tr><td colspan="7" class="muted">該当なし</td></tr>`;
+    $('arows').querySelectorAll('tr.click').forEach(tr=>tr.onclick = ()=>admDetail(R.find(x=>x.emp.id===Number(tr.dataset.id))));
+  }
+  draw();
+}
+function admDetail(x){
+  const m = document.createElement('div'); m.className = 'modal';
+  const sumOf = v => v.s.reduce((a,b)=>a+b,0);
+  m.innerHTML = `<div class="card"><div class="row" style="margin-bottom:8px"><div><h2 style="margin:0">${esc(x.emp.name)}</h2><p class="sub">${esc(x.emp.workplace)}</p></div><button class="btn small" id="cl">閉じる</button></div>
+    ${x.complete?`<div class="summary" style="margin:8px 0 14px"><b class="rk big ${x.c.rank}">${x.c.rank}</b><div><div class="tot">${f1(x.c.total)}<small>点</small></div><p class="sub">加点 ${f1(x.c.plus)}点　減点 −${x.c.minus}点</p></div></div>`:'<div class="note">3名の評価が揃っていません（評価者側には結果は表示されていません）</div>'}
+    <div class="scroll"><table><thead><tr><th>加点項目</th><th class="n">配点</th>${ROLE_ORDER.map(r=>`<th class="n">${ROLES[r]}<br>${x.by[r]?esc(x.by[r].evaluator):'未'}</th>`).join('')}<th class="n">平均</th></tr></thead><tbody>
+      ${ITEMS.map((it,i)=>`<tr><td>${it.name}</td><td class="n">${it.max}</td>${ROLE_ORDER.map(r=>`<td class="n">${x.by[r]?x.by[r].s[i]:'—'}</td>`).join('')}<td class="n">${x.complete?f1(x.res.items[i]):'—'}</td></tr>`).join('')}
+      <tr class="sum"><td>小計</td><td class="n">100</td>${ROLE_ORDER.map(r=>`<td class="n">${x.by[r]?sumOf(x.by[r]):'—'}</td>`).join('')}<td class="n">${x.complete?f1(x.c.plus):'—'}</td></tr></tbody></table></div>
+    <h3 class="mt">減点項目（事業部入力）</h3>
+    ${x.by.jigyobu?`<table><tbody>${DEDS.map((d,i)=>{ const n = x.by.jigyobu.d[i]; return `<tr class="${n?'':'zero'}"><td>${d.name}</td><td class="n">${n}回</td><td class="n">${n?'−'+n*d.pt:'0'}</td></tr>`; }).join('')}</tbody></table>`:'<p class="muted">事業部の評価が未入力です</p>'}
+    <h3 class="mt">差し戻し</h3><p class="sub">評価を削除すると、その評価者が再入力できる状態に戻ります。</p>
+    <div class="row mt">${ROLE_ORDER.filter(r=>x.by[r]).map(r=>`<button class="btn danger small" data-del="${x.by[r].id}" data-n="${esc(x.by[r].evaluator)}">${ROLES[r]}の評価を削除</button>`).join('') || '<span class="muted">評価はまだありません</span>'}</div></div>`;
+  document.body.appendChild(m);
+  const close = ()=>m.remove();
+  m.onclick = e=>{ if (e.target===m) close(); };
+  m.querySelector('#cl').onclick = close;
+  m.querySelectorAll('[data-del]').forEach(b=>b.onclick = ()=>guard(async()=>{
+    if (!confirm(`${x.emp.name} さんに対する ${b.dataset.n} さんの評価を削除します。元に戻せません。よろしいですか？`)) return;
+    await rpc('bonus_admin_delete_evaluation', {p_admin:st.pass, p_id:Number(b.dataset.del)});
+    close(); toast('削除しました'); showAdmin();
+  }));
+}
+function csvCell(v){ const s = String(v ?? ''); return /[",\n]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s; }
+function exportCSV(R, pname){
+  const head = ['氏名','事業所','状況','ランク','合計点','加点計','減点計', ...ITEMS.map(i=>i.name+'(平均)'), ...DEDS.map(d=>d.name+'(回)'), ...ROLE_ORDER.map(r=>ROLES[r]+'評価者'), ...ROLE_ORDER.map(r=>ROLES[r]+'小計')];
+  const lines = [head];
+  R.forEach(x=>{
+    lines.push([x.emp.name, x.emp.workplace, x.complete?'確定':'未完了', x.complete?x.c.rank:'', x.complete?f1(x.c.total):'', x.complete?f1(x.c.plus):'', x.complete?x.c.minus:'',
+      ...ITEMS.map((_,i)=>x.complete?f1(x.res.items[i]):''), ...DEDS.map((_,i)=>x.by.jigyobu?x.by.jigyobu.d[i]:''),
+      ...ROLE_ORDER.map(r=>x.by[r]?x.by[r].evaluator:''), ...ROLE_ORDER.map(r=>x.by[r]?x.by[r].s.reduce((a,b)=>a+b,0):'')]);
+  });
+  const blob = new Blob(['\uFEFF' + lines.map(l=>l.map(csvCell).join(',')).join('\r\n')], {type:'text/csv'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `賞与評価_${pname}.csv`; a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 2000);
+}
+
+function admEmp(){
+  const A = st.adm; let editId = null;
+  $('pane').innerHTML = `<div class="card"><h2 id="eh">社員を追加</h2>
+      <div class="row"><input type="text" id="en" placeholder="氏名"><input type="text" id="ew" placeholder="事業所（任意）" list="wplist"><button class="btn primary" id="es">追加</button><button class="btn" id="ec" style="display:none">取消</button></div>
+      <datalist id="wplist">${[...new Set(A.employees.map(e=>e.workplace).filter(Boolean))].map(w=>`<option value="${esc(w)}">`).join('')}</datalist></div>
+    <div class="card"><h2>CSVで一括登録</h2><p class="sub">1列目＝氏名、2列目＝事業所。見出し行（氏名・名前）は自動でスキップします。Excelで保存したCSV（Shift_JIS）もそのまま使えます。同じ氏名＋事業所はスキップされます。</p>
+      <input type="file" id="cf" accept=".csv,text/csv" class="mt"></div>
+    <div class="card"><div class="row" style="margin-bottom:8px"><h2 style="margin:0">登録済み（${A.employees.length}名）</h2><input type="search" id="eq" placeholder="検索"></div>
+      <div class="scroll"><table style="min-width:480px"><thead><tr><th>氏名</th><th>事業所</th><th>状態</th><th></th></tr></thead><tbody id="erows"></tbody></table></div></div>`;
+  const reset = ()=>{ editId=null; $('en').value=''; $('ew').value=''; $('eh').textContent='社員を追加'; $('es').textContent='追加'; $('ec').style.display='none'; };
+  $('ec').onclick = reset;
+  $('es').onclick = ()=>guard(async()=>{
+    const n = $('en').value.trim(); if(!n){ toast('氏名を入力してください', true); return; }
+    const cur = editId ? A.employees.find(e=>e.id===editId) : null;
+    await rpc('bonus_admin_save_employee', {p_admin:st.pass, p_id:editId, p_name:n, p_workplace:$('ew').value.trim(), p_active:cur?cur.active:true});
+    toast(editId?'更新しました':'追加しました'); showAdmin();
+  });
+  $('cf').onchange = e=>guard(async()=>{
+    const file = e.target.files[0]; if(!file) return;
+    const text = (await readFileText(file)).replace(/^\uFEFF/,'');
+    let rows = parseCSV(text).filter(r=>r.length && String(r[0]).trim());
+    if (rows.length && /^(氏名|名前|社員名)$/.test(rows[0][0].trim())) rows = rows.slice(1);
+    if (!rows.length){ toast('取り込める行がありません', true); return; }
+    if (!confirm(`${rows.length}行を取り込みます。よろしいですか？\n例：${rows.slice(0,3).map(r=>r[0].trim()+(r[1]?'（'+r[1].trim()+'）':'')).join('、')}`)){ e.target.value=''; return; }
+    const n = await rpc('bonus_admin_import_employees', {p_admin:st.pass, p_rows:rows.map(r=>({name:r[0].trim(), workplace:(r[1]||'').trim()}))});
+    toast(`${n}名を追加しました${rows.length-n?`（${rows.length-n}行は重複のためスキップ）`:''}`); showAdmin();
+  });
+  const draw = ()=>{
+    const q = $('eq').value.trim();
+    $('erows').innerHTML = A.employees.filter(e=>!q||e.name.includes(q)||e.workplace.includes(q)).map(e=>`<tr><td>${esc(e.name)}</td><td>${esc(e.workplace)}</td>
+      <td>${e.active?'<span class="badge">有効</span>':'<span class="badge gray">無効</span>'}</td>
+      <td class="n"><button class="btn small" data-ed="${e.id}">編集</button> <button class="btn small" data-tg="${e.id}">${e.active?'無効化':'有効化'}</button></td></tr>`).join('') || '<tr><td colspan="4" class="muted">まだ登録がありません</td></tr>';
+    $('erows').querySelectorAll('[data-ed]').forEach(b=>b.onclick = ()=>{
+      const e = A.employees.find(x=>x.id===Number(b.dataset.ed)); editId = e.id;
+      $('en').value = e.name; $('ew').value = e.workplace; $('eh').textContent = '社員を編集'; $('es').textContent = '更新'; $('ec').style.display = ''; window.scrollTo({top:0,behavior:'smooth'});
+    });
+    $('erows').querySelectorAll('[data-tg]').forEach(b=>b.onclick = ()=>guard(async()=>{
+      const e = A.employees.find(x=>x.id===Number(b.dataset.tg));
+      await rpc('bonus_admin_save_employee', {p_admin:st.pass, p_id:e.id, p_name:e.name, p_workplace:e.workplace, p_active:!e.active});
+      toast(e.active?'無効にしました（評価者の一覧に表示されなくなります）':'有効にしました'); showAdmin();
+    }));
+  };
+  $('eq').oninput = draw; draw();
+}
+async function readFileText(file){
+  const buf = await file.arrayBuffer();
+  try{ return new TextDecoder('utf-8', {fatal:true}).decode(buf); }
+  catch(e){ return new TextDecoder('shift_jis').decode(buf); }
+}
+function parseCSV(text){
+  const rows=[]; let row=[], f='', q=false;
+  for (let i=0;i<text.length;i++){
+    const c = text[i];
+    if (q){ if (c==='"'){ if (text[i+1]==='"'){ f+='"'; i++; } else q=false; } else f+=c; }
+    else if (c==='"') q=true;
+    else if (c===','){ row.push(f); f=''; }
+    else if (c==='\n'){ row.push(f); rows.push(row); row=[]; f=''; }
+    else if (c!=='\r') f+=c;
+  }
+  if (f!=='' || row.length){ row.push(f); rows.push(row); }
+  return rows;
+}
+
+function admEvr(){
+  const A = st.adm; let editId = null;
+  $('pane').innerHTML = `<div class="card"><h2 id="vh">評価者を追加</h2>
+      <div class="row"><input type="text" id="vn" placeholder="氏名"><select id="vr">${ROLE_ORDER.map(r=>`<option value="${r}">${ROLES[r]}</option>`).join('')}</select><button class="btn primary" id="vs">追加</button><button class="btn" id="vc" style="display:none">取消</button></div>
+      <p class="sub mt">対象者1名につき、マネージャー・次長・事業部から各1名が評価します。減点項目は事業部のみ入力できます。</p></div>
+    <div class="card"><h2>登録済み（${A.evaluators.length}名）</h2><div class="scroll"><table style="min-width:420px"><thead><tr><th>氏名</th><th>役職</th><th>状態</th><th></th></tr></thead><tbody>
+      ${A.evaluators.map(v=>`<tr><td>${esc(v.name)}</td><td>${ROLES[v.role]}</td><td>${v.active?'<span class="badge">有効</span>':'<span class="badge gray">無効</span>'}</td>
+        <td class="n"><button class="btn small" data-ed="${v.id}">編集</button> <button class="btn small" data-tg="${v.id}">${v.active?'無効化':'有効化'}</button></td></tr>`).join('') || '<tr><td colspan="4" class="muted">まだ登録がありません</td></tr>'}
+    </tbody></table></div></div>`;
+  $('vc').onclick = ()=>{ editId=null; $('vn').value=''; $('vh').textContent='評価者を追加'; $('vs').textContent='追加'; $('vc').style.display='none'; };
+  $('vs').onclick = ()=>guard(async()=>{
+    const n = $('vn').value.trim(); if(!n){ toast('氏名を入力してください', true); return; }
+    const cur = editId ? A.evaluators.find(v=>v.id===editId) : null;
+    await rpc('bonus_admin_save_evaluator', {p_admin:st.pass, p_id:editId, p_name:n, p_role:$('vr').value, p_active:cur?cur.active:true});
+    toast(editId?'更新しました':'追加しました'); showAdmin();
+  });
+  document.querySelectorAll('#pane [data-ed]').forEach(b=>b.onclick = ()=>{
+    const v = A.evaluators.find(x=>x.id===Number(b.dataset.ed)); editId = v.id;
+    $('vn').value = v.name; $('vr').value = v.role; $('vh').textContent = '評価者を編集'; $('vs').textContent = '更新'; $('vc').style.display = ''; window.scrollTo({top:0,behavior:'smooth'});
+  });
+  document.querySelectorAll('#pane [data-tg]').forEach(b=>b.onclick = ()=>guard(async()=>{
+    const v = A.evaluators.find(x=>x.id===Number(b.dataset.tg));
+    await rpc('bonus_admin_save_evaluator', {p_admin:st.pass, p_id:v.id, p_name:v.name, p_role:v.role, p_active:!v.active});
+    toast(v.active?'無効にしました（選択画面に表示されなくなります）':'有効にしました'); showAdmin();
+  }));
+}
+
+function admPer(){
+  const A = st.adm;
+  $('pane').innerHTML = `<div class="card"><h2>新しい評価期間を作成</h2>
+      <div class="row"><input type="text" id="pn" placeholder="例：2027年 夏季賞与"><button class="btn primary" id="pc">作成して切り替え</button></div>
+      <p class="sub mt">評価者は「現在の期間」に対して入力します。過去の期間の評価は残り、評価状況タブで切り替えて確認できます。</p></div>
+    <div class="card"><h2>期間一覧</h2><table><tbody>
+      ${A.periods.map(p=>`<tr><td>${esc(p.name)}</td><td class="n">${p.id===A.active_period_id?'<span class="badge">現在の期間</span>':`<button class="btn small" data-act="${p.id}">現在の期間にする</button>`}</td></tr>`).join('')}
+    </tbody></table></div>`;
+  $('pc').onclick = ()=>guard(async()=>{
+    const n = $('pn').value.trim(); if(!n){ toast('期間名を入力してください', true); return; }
+    if (!confirm(`「${n}」を作成し、現在の期間に切り替えます。よろしいですか？`)) return;
+    const id = await rpc('bonus_admin_create_period', {p_admin:st.pass, p_name:n});
+    st.admPeriod = id; toast('作成しました'); showAdmin();
+  });
+  document.querySelectorAll('#pane [data-act]').forEach(b=>b.onclick = ()=>guard(async()=>{
+    await rpc('bonus_admin_set_period', {p_admin:st.pass, p_id:Number(b.dataset.act)});
+    st.admPeriod = Number(b.dataset.act); toast('切り替えました'); showAdmin();
+  }));
+}
+
+function admSet(){
+  $('pane').innerHTML = `<div class="card"><h2>評価者用パスワードの変更</h2><p class="sub">評価者全員が使う共通パスワードです。</p>
+      <label class="lb">新しいパスワード（6文字以上）</label><input type="password" id="u1" autocomplete="new-password">
+      <label class="lb">確認のためもう一度</label><input type="password" id="u2" autocomplete="new-password">
+      <button class="btn primary wide" id="us">変更する</button></div>
+    <div class="card"><h2>管理者パスワードの変更</h2><p class="sub">ログイン画面で評価者用の代わりにこのパスワードを入れると管理画面が開きます。</p>
+      <label class="lb">新しいパスワード（6文字以上）</label><input type="password" id="a1" autocomplete="new-password">
+      <label class="lb">確認のためもう一度</label><input type="password" id="a2" autocomplete="new-password">
+      <button class="btn primary wide" id="as">変更する</button></div>`;
+  const go = (kind, a, b)=>guard(async()=>{
+    const p1 = $(a).value, p2 = $(b).value;
+    if (p1 !== p2){ toast('確認用と一致しません', true); return; }
+    await rpc('bonus_admin_set_password', {p_admin:st.pass, p_kind:kind, p_new:p1});
+    if (kind==='admin'){ st.pass = p1; save(); }
+    $(a).value = $(b).value = ''; toast('変更しました');
+  });
+  $('us').onclick = ()=>go('user','u1','u2');
+  $('as').onclick = ()=>go('admin','a1','a2');
+}
+
+// ===================== 起動 =====================
+(function start(){
+  if (!CONFIGURED){
+    $app.innerHTML = `<div class="center"><div class="card login"><h1>賞与評価</h1><p class="err">接続先が設定されていません。<br>index.html の SUPABASE_URL と SUPABASE_ANON_KEY を設定してください。</p></div></div>`;
+    return;
+  }
+  load();
+  if (!st.pass) return showLogin();
+  if (st.mode==='admin') return showAdmin();
+  if (!st.ev) return showPick();
+  showList();
+})();
+</script>
+</body>
+</html>
