@@ -140,6 +140,7 @@ function calc(items, ded){
   const rank = total>=90?'S':total>=80?'A':total>=70?'B':total>=60?'C':'D';
   return {plus, minus, total, rank};
 }
+const empSub = e => [e.workplace, e.position].filter(Boolean).join('・');
 const f1 = n => (Math.round(Number(n)*10)/10).toFixed(1);
 
 // ===================== 共通 =====================
@@ -271,7 +272,7 @@ function renderRows(){
     else if (e.mine) right = `<span class="badge">入力済・他の評価待ち</span>`;
     else if (e.taken) right = `<span class="badge gray">他の${ROLES[L.role]}が担当</span>`;
     else right = `<span class="badge warn">未入力</span>`;
-    return `<button class="emp ${e.taken&&!e.mine?'off':''}" data-id="${e.id}"><span class="grow"><span class="nm">${esc(e.name)}</span><br><span class="wp">${esc(e.workplace||'')}</span></span>${right}</button>`;
+    return `<button class="emp ${e.taken&&!e.mine?'off':''}" data-id="${e.id}"><span class="grow"><span class="nm">${esc(e.name)}</span><br><span class="wp">${esc(empSub(e))}</span></span>${right}</button>`;
   }).join('') : '<p class="muted">該当する対象者がいません</p>';
   $('rows').querySelectorAll('.emp').forEach(b=>b.onclick = ()=>{
     const e = L.employees.find(x=>x.id===Number(b.dataset.id));
@@ -290,7 +291,7 @@ function showForm(emp){ guard(async()=>{
   const dv = i => mine ? mine.d[i] : 0;
   $app.innerHTML = topBar() + `<main class="narrow">
     <button class="back" id="bk">← 対象者一覧へ戻る</button>
-    <div class="card"><h2 style="margin:0">${esc(emp.name)}</h2><p class="sub">${esc(emp.workplace||'')}　/　${esc(st.list.period.name)}</p>
+    <div class="card"><h2 style="margin:0">${esc(emp.name)}</h2><p class="sub">${esc(empSub(emp))}　/　${esc(st.list.period.name)}</p>
       ${mine?'<div class="note">入力済みの内容を修正しています。3名の評価が揃うまでは修正できます。</div>':''}
     </div>
     <div class="card"><h2>加点項目 <span class="muted" style="font-size:13px;font-weight:400">（100点満点）</span></h2>
@@ -343,7 +344,7 @@ function resultBody(res){
 }
 function showResult(emp){
   $app.innerHTML = topBar() + `<main class="narrow"><button class="back" id="bk">← 対象者一覧へ戻る</button>
-    <div class="card"><h2 style="margin:0">${esc(emp.name)}</h2><p class="sub">${esc(emp.workplace||'')}　/　評価結果（確定）</p></div>
+    <div class="card"><h2 style="margin:0">${esc(emp.name)}</h2><p class="sub">${esc(empSub(emp))}　/　評価結果（確定）</p></div>
     ${resultBody(emp.result)}</main>`;
   bindTop();
   $('bk').onclick = ()=>showList(true);
@@ -396,7 +397,7 @@ function admEval(){
     <div class="row" style="margin-bottom:12px"><input type="search" id="aq" placeholder="名前で検索" value="${esc(st.aq)}">
       ${wps.length?`<select id="awp"><option value="">すべての事業所</option>${wps.map(w=>`<option ${w===st.awp?'selected':''}>${esc(w)}</option>`).join('')}</select>`:''}
       <select id="ast"><option value="">すべての状況</option><option value="done" ${st.ast==='done'?'selected':''}>確定のみ</option><option value="todo" ${st.ast==='todo'?'selected':''}>未完了のみ</option></select></div>
-    <div class="card scroll" style="padding:8px 12px"><table><thead><tr><th>氏名</th><th>事業所</th>${ROLE_ORDER.map(r=>`<th>${ROLES[r]}</th>`).join('')}<th class="n">合計</th><th>ランク</th></tr></thead><tbody id="arows"></tbody></table></div>`;
+    <div class="card scroll" style="padding:8px 12px"><table><thead><tr><th>氏名</th><th>事業所</th><th>職責</th>${ROLE_ORDER.map(r=>`<th>${ROLES[r]}</th>`).join('')}<th class="n">合計</th><th>ランク</th></tr></thead><tbody id="arows"></tbody></table></div>`;
   $('per').onchange = e=>{ st.admPeriod = Number(e.target.value); showAdmin(); };
   $('aq').oninput = e=>{ st.aq = e.target.value; draw(); };
   if ($('awp')) $('awp').onchange = e=>{ st.awp = e.target.value; draw(); };
@@ -405,9 +406,9 @@ function admEval(){
   function draw(){
     const q = st.aq.trim();
     const rows = R.filter(x=>(!q||x.emp.name.includes(q)) && (!st.awp||x.emp.workplace===st.awp) && (!st.ast||(st.ast==='done')===x.complete));
-    $('arows').innerHTML = rows.map(x=>`<tr class="click" data-id="${x.emp.id}"><td><b>${esc(x.emp.name)}</b>${x.emp.active?'':' <span class="badge gray">無効</span>'}</td><td>${esc(x.emp.workplace)}</td>
+    $('arows').innerHTML = rows.map(x=>`<tr class="click" data-id="${x.emp.id}"><td><b>${esc(x.emp.name)}</b>${x.emp.active?'':' <span class="badge gray">無効</span>'}</td><td>${esc(x.emp.workplace)}</td><td>${esc(x.emp.position||'')}</td>
       ${ROLE_ORDER.map(r=>`<td>${x.by[r]?esc(x.by[r].evaluator):'<span class="muted">未</span>'}</td>`).join('')}
-      <td class="n">${x.complete?f1(x.c.total):'—'}</td><td>${x.complete?`<b class="rk ${x.c.rank}">${x.c.rank}</b>`:''}</td></tr>`).join('') || `<tr><td colspan="7" class="muted">該当なし</td></tr>`;
+      <td class="n">${x.complete?f1(x.c.total):'—'}</td><td>${x.complete?`<b class="rk ${x.c.rank}">${x.c.rank}</b>`:''}</td></tr>`).join('') || `<tr><td colspan="8" class="muted">該当なし</td></tr>`;
     $('arows').querySelectorAll('tr.click').forEach(tr=>tr.onclick = ()=>admDetail(R.find(x=>x.emp.id===Number(tr.dataset.id))));
   }
   draw();
@@ -415,7 +416,7 @@ function admEval(){
 function admDetail(x){
   const m = document.createElement('div'); m.className = 'modal';
   const sumOf = v => v.s.reduce((a,b)=>a+b,0);
-  m.innerHTML = `<div class="card"><div class="row" style="margin-bottom:8px"><div><h2 style="margin:0">${esc(x.emp.name)}</h2><p class="sub">${esc(x.emp.workplace)}</p></div><button class="btn small" id="cl">閉じる</button></div>
+  m.innerHTML = `<div class="card"><div class="row" style="margin-bottom:8px"><div><h2 style="margin:0">${esc(x.emp.name)}</h2><p class="sub">${esc(empSub(x.emp))}</p></div><button class="btn small" id="cl">閉じる</button></div>
     ${x.complete?`<div class="summary" style="margin:8px 0 14px"><b class="rk big ${x.c.rank}">${x.c.rank}</b><div><div class="tot">${f1(x.c.total)}<small>点</small></div><p class="sub">加点 ${f1(x.c.plus)}点　減点 −${x.c.minus}点</p></div></div>`:'<div class="note">3名の評価が揃っていません（評価者側には結果は表示されていません）</div>'}
     <div class="scroll"><table><thead><tr><th>加点項目</th><th class="n">配点</th>${ROLE_ORDER.map(r=>`<th class="n">${ROLES[r]}<br>${x.by[r]?esc(x.by[r].evaluator):'未'}</th>`).join('')}<th class="n">平均</th></tr></thead><tbody>
       ${ITEMS.map((it,i)=>`<tr><td>${it.name}</td><td class="n">${it.max}</td>${ROLE_ORDER.map(r=>`<td class="n">${x.by[r]?x.by[r].s[i]:'—'}</td>`).join('')}<td class="n">${x.complete?f1(x.res.items[i]):'—'}</td></tr>`).join('')}
@@ -436,10 +437,10 @@ function admDetail(x){
 }
 function csvCell(v){ const s = String(v ?? ''); return /[",\n]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s; }
 function exportCSV(R, pname){
-  const head = ['氏名','事業所','状況','ランク','合計点','加点計','減点計', ...ITEMS.map(i=>i.name+'(平均)'), ...DEDS.map(d=>d.name+'(回)'), ...ROLE_ORDER.map(r=>ROLES[r]+'評価者'), ...ROLE_ORDER.map(r=>ROLES[r]+'小計')];
+  const head = ['氏名','事業所','職責','状況','ランク','合計点','加点計','減点計', ...ITEMS.map(i=>i.name+'(平均)'), ...DEDS.map(d=>d.name+'(回)'), ...ROLE_ORDER.map(r=>ROLES[r]+'評価者'), ...ROLE_ORDER.map(r=>ROLES[r]+'小計')];
   const lines = [head];
   R.forEach(x=>{
-    lines.push([x.emp.name, x.emp.workplace, x.complete?'確定':'未完了', x.complete?x.c.rank:'', x.complete?f1(x.c.total):'', x.complete?f1(x.c.plus):'', x.complete?x.c.minus:'',
+    lines.push([x.emp.name, x.emp.workplace, x.emp.position||'', x.complete?'確定':'未完了', x.complete?x.c.rank:'', x.complete?f1(x.c.total):'', x.complete?f1(x.c.plus):'', x.complete?x.c.minus:'',
       ...ITEMS.map((_,i)=>x.complete?f1(x.res.items[i]):''), ...DEDS.map((_,i)=>x.by.jigyobu?x.by.jigyobu.d[i]:''),
       ...ROLE_ORDER.map(r=>x.by[r]?x.by[r].evaluator:''), ...ROLE_ORDER.map(r=>x.by[r]?x.by[r].s.reduce((a,b)=>a+b,0):'')]);
   });
@@ -451,18 +452,18 @@ function exportCSV(R, pname){
 function admEmp(){
   const A = st.adm; let editId = null;
   $('pane').innerHTML = `<div class="card"><h2 id="eh">社員を追加</h2>
-      <div class="row"><input type="text" id="en" placeholder="氏名"><input type="text" id="ew" placeholder="事業所（任意）" list="wplist"><button class="btn primary" id="es">追加</button><button class="btn" id="ec" style="display:none">取消</button></div>
-      <datalist id="wplist">${[...new Set(A.employees.map(e=>e.workplace).filter(Boolean))].map(w=>`<option value="${esc(w)}">`).join('')}</datalist></div>
-    <div class="card"><h2>CSVで一括登録</h2><p class="sub">1列目＝氏名、2列目＝事業所。見出し行（氏名・名前）は自動でスキップします。Excelで保存したCSV（Shift_JIS）もそのまま使えます。同じ氏名＋事業所はスキップされます。</p>
+      <div class="row"><input type="text" id="en" placeholder="氏名"><input type="text" id="ew" placeholder="事業所（任意）" list="wplist"><input type="text" id="ep" placeholder="職責（任意）例：責任者" list="pslist"><button class="btn primary" id="es">追加</button><button class="btn" id="ec" style="display:none">取消</button></div>
+      <datalist id="wplist">${[...new Set(A.employees.map(e=>e.workplace).filter(Boolean))].map(w=>`<option value="${esc(w)}">`).join('')}</datalist><datalist id="pslist">${[...new Set(A.employees.map(e=>e.position).filter(Boolean))].map(w=>`<option value="${esc(w)}">`).join('')}</datalist></div>
+    <div class="card"><h2>CSVで一括登録</h2><p class="sub">1列目＝氏名、2列目＝事業所、3列目＝職責（任意）。見出し行（氏名・名前）は自動でスキップします。Excelで保存したCSV（Shift_JIS）もそのまま使えます。同じ氏名＋事業所がすでに登録されている場合は追加せず、職責だけ更新します。</p>
       <input type="file" id="cf" accept=".csv,text/csv" class="mt"></div>
     <div class="card"><div class="row" style="margin-bottom:8px"><h2 style="margin:0">登録済み（${A.employees.length}名）</h2><input type="search" id="eq" placeholder="検索"></div>
-      <div class="scroll"><table style="min-width:480px"><thead><tr><th>氏名</th><th>事業所</th><th>状態</th><th></th></tr></thead><tbody id="erows"></tbody></table></div></div>`;
-  const reset = ()=>{ editId=null; $('en').value=''; $('ew').value=''; $('eh').textContent='社員を追加'; $('es').textContent='追加'; $('ec').style.display='none'; };
+      <div class="scroll"><table style="min-width:560px"><thead><tr><th>氏名</th><th>事業所</th><th>職責</th><th>状態</th><th></th></tr></thead><tbody id="erows"></tbody></table></div></div>`;
+  const reset = ()=>{ editId=null; $('en').value=''; $('ew').value=''; $('ep').value=''; $('eh').textContent='社員を追加'; $('es').textContent='追加'; $('ec').style.display='none'; };
   $('ec').onclick = reset;
   $('es').onclick = ()=>guard(async()=>{
     const n = $('en').value.trim(); if(!n){ toast('氏名を入力してください', true); return; }
     const cur = editId ? A.employees.find(e=>e.id===editId) : null;
-    await rpc('bonus_admin_save_employee', {p_admin:st.pass, p_id:editId, p_name:n, p_workplace:$('ew').value.trim(), p_active:cur?cur.active:true});
+    await rpc('bonus_admin_save_employee', {p_admin:st.pass, p_id:editId, p_name:n, p_workplace:$('ew').value.trim(), p_position:$('ep').value.trim(), p_active:cur?cur.active:true});
     toast(editId?'更新しました':'追加しました'); showAdmin();
   });
   $('cf').onchange = e=>guard(async()=>{
@@ -472,21 +473,21 @@ function admEmp(){
     if (rows.length && /^(氏名|名前|社員名)$/.test(rows[0][0].trim())) rows = rows.slice(1);
     if (!rows.length){ toast('取り込める行がありません', true); return; }
     if (!confirm(`${rows.length}行を取り込みます。よろしいですか？\n例：${rows.slice(0,3).map(r=>r[0].trim()+(r[1]?'（'+r[1].trim()+'）':'')).join('、')}`)){ e.target.value=''; return; }
-    const n = await rpc('bonus_admin_import_employees', {p_admin:st.pass, p_rows:rows.map(r=>({name:r[0].trim(), workplace:(r[1]||'').trim()}))});
-    toast(`${n}名を追加しました${rows.length-n?`（${rows.length-n}行は重複のためスキップ）`:''}`); showAdmin();
+    const n = await rpc('bonus_admin_import_employees', {p_admin:st.pass, p_rows:rows.map(r=>({name:r[0].trim(), workplace:(r[1]||'').trim(), position:(r[2]||'').trim()}))});
+    toast(`${n}名を追加しました${rows.length-n?`（${rows.length-n}行は登録済みのため職責のみ更新）`:''}`); showAdmin();
   });
   const draw = ()=>{
     const q = $('eq').value.trim();
-    $('erows').innerHTML = A.employees.filter(e=>!q||e.name.includes(q)||e.workplace.includes(q)).map(e=>`<tr><td>${esc(e.name)}</td><td>${esc(e.workplace)}</td>
+    $('erows').innerHTML = A.employees.filter(e=>!q||e.name.includes(q)||e.workplace.includes(q)||(e.position||'').includes(q)).map(e=>`<tr><td>${esc(e.name)}</td><td>${esc(e.workplace)}</td><td>${esc(e.position||'')}</td>
       <td>${e.active?'<span class="badge">有効</span>':'<span class="badge gray">無効</span>'}</td>
-      <td class="n"><button class="btn small" data-ed="${e.id}">編集</button> <button class="btn small" data-tg="${e.id}">${e.active?'無効化':'有効化'}</button></td></tr>`).join('') || '<tr><td colspan="4" class="muted">まだ登録がありません</td></tr>';
+      <td class="n"><button class="btn small" data-ed="${e.id}">編集</button> <button class="btn small" data-tg="${e.id}">${e.active?'無効化':'有効化'}</button></td></tr>`).join('') || '<tr><td colspan="5" class="muted">まだ登録がありません</td></tr>';
     $('erows').querySelectorAll('[data-ed]').forEach(b=>b.onclick = ()=>{
       const e = A.employees.find(x=>x.id===Number(b.dataset.ed)); editId = e.id;
-      $('en').value = e.name; $('ew').value = e.workplace; $('eh').textContent = '社員を編集'; $('es').textContent = '更新'; $('ec').style.display = ''; window.scrollTo({top:0,behavior:'smooth'});
+      $('en').value = e.name; $('ew').value = e.workplace; $('ep').value = e.position||''; $('eh').textContent = '社員を編集'; $('es').textContent = '更新'; $('ec').style.display = ''; window.scrollTo({top:0,behavior:'smooth'});
     });
     $('erows').querySelectorAll('[data-tg]').forEach(b=>b.onclick = ()=>guard(async()=>{
       const e = A.employees.find(x=>x.id===Number(b.dataset.tg));
-      await rpc('bonus_admin_save_employee', {p_admin:st.pass, p_id:e.id, p_name:e.name, p_workplace:e.workplace, p_active:!e.active});
+      await rpc('bonus_admin_save_employee', {p_admin:st.pass, p_id:e.id, p_name:e.name, p_workplace:e.workplace, p_position:e.position||'', p_active:!e.active});
       toast(e.active?'無効にしました（評価者の一覧に表示されなくなります）':'有効にしました'); showAdmin();
     }));
   };
@@ -541,7 +542,7 @@ function admEvr(){
 function admPer(){
   const A = st.adm;
   $('pane').innerHTML = `<div class="card"><h2>新しい評価期間を作成</h2>
-      <div class="row"><input type="text" id="pn" placeholder="例：2027年 夏季賞与"><button class="btn primary" id="pc">作成して切り替え</button></div>
+      <div class="row"><input type="text" id="pn" placeholder="例：2027年 上期"><button class="btn primary" id="pc">作成して切り替え</button></div>
       <p class="sub mt">評価者は「現在の期間」に対して入力します。過去の期間の評価は残り、評価状況タブで切り替えて確認できます。</p></div>
     <div class="card"><h2>期間一覧</h2><table><tbody>
       ${A.periods.map(p=>`<tr><td>${esc(p.name)}</td><td class="n">${p.id===A.active_period_id?'<span class="badge">現在の期間</span>':`<button class="btn small" data-act="${p.id}">現在の期間にする</button>`}</td></tr>`).join('')}
