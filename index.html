@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <title>社員評価</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="社員評価">
 <style>
 :root{
   --bg:#f4f5f2;--card:#fff;--ink:#1e2320;--sub:#6a736d;--line:#dde2dd;--accent:#2f6b4f;--accent-ink:#fff;
@@ -42,6 +45,8 @@ label.lb{display:block;font-size:13px;color:var(--sub);margin:10px 0 4px}
 .center{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px}
 .login{width:100%;max-width:360px;text-align:center}
 .login form{margin-top:16px}
+.login .logo{width:64px;height:64px;display:block;margin:0 auto 8px}
+header.top .hlogo{width:26px;height:26px;display:block}
 .err{color:var(--warn);font-size:14px;margin:10px 0 0}
 .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .row>*{flex:1;min-width:140px}
@@ -207,7 +212,7 @@ function scaleHTML(){ return `<div class="scale">${[['S','90点以上'],['A','80
 // ===================== ログイン =====================
 function showLogin(msg){
   $app.innerHTML = `<div class="center"><div class="card login">
-    <h1>社員評価</h1><p class="sub">パスワードを入力してください</p>
+    <img class="logo" src="favicon.png" alt=""><h1>社員評価</h1><p class="sub">パスワードを入力してください</p>
     <form id="f"><input type="password" id="pw" autocomplete="current-password" placeholder="パスワード" required>
     <button class="btn primary wide" id="lg">ログイン</button></form>
     ${msg?`<p class="err">${esc(msg)}</p>`:''}</div></div>`;
@@ -225,7 +230,7 @@ function showLogin(msg){
 
 // ===================== 評価者：共通ヘッダー =====================
 function topBar(){
-  return `<header class="top"><span class="ttl">社員評価</span>
+  return `<header class="top"><img class="hlogo" src="favicon.png" alt=""><span class="ttl">社員評価</span>
     ${st.ev?`<span class="who">${esc(st.ev.name)}（${ROLES[st.ev.role]}）</span>`:''}<span class="sp"></span>
     <button class="btn small" id="out">ログアウト</button></header>`;
 }
@@ -376,7 +381,7 @@ function admResults(){
 function renderAdmin(){
   const A = st.adm;
   const tabs = [['eval','評価状況'],['emp','社員'],['evr','評価者'],['per','評価期間'],['set','設定']];
-  $app.innerHTML = `<header class="top"><span class="ttl">社員評価　管理</span><span class="sp"></span><button class="btn small" id="out">ログアウト</button></header>
+  $app.innerHTML = `<header class="top"><img class="hlogo" src="favicon.png" alt=""><span class="ttl">社員評価　管理</span><span class="sp"></span><button class="btn small" id="out">ログアウト</button></header>
     <main><div class="tabs">${tabs.map(([k,t])=>`<button class="tab ${st.admTab===k?'on':''}" data-t="${k}">${t}</button>`).join('')}</div><div id="pane"></div></main>`;
   $('out').onclick = logout;
   document.querySelectorAll('.tab').forEach(b=>b.onclick = ()=>{ st.admTab = b.dataset.t; renderAdmin(); });
