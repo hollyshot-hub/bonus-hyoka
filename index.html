@@ -25,6 +25,7 @@ header.top .who{color:var(--sub);font-size:13px}
 header.top .sp{flex:1}
 main{max-width:860px;margin:0 auto;padding:16px}
 main.narrow{max-width:560px}
+main.wide{max-width:1240px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:14px}
 h1{font-size:22px;margin:0 0 4px}h2{font-size:18px;margin:0 0 12px}h3{font-size:15px;margin:0 0 8px}
 .sub{color:var(--sub);font-size:14px;margin:0}
@@ -45,7 +46,20 @@ label.lb{display:block;font-size:13px;color:var(--sub);margin:10px 0 4px}
 .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .row>*{flex:1;min-width:140px}
 .row>.btn{flex:0 0 auto;min-width:0}
-.list{display:flex;flex-direction:column;gap:8px}
+.list{display:grid;grid-template-columns:1fr;gap:8px}
+@media (min-width:640px){.list{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}}
+@media (min-width:980px){.list{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media (min-width:640px){
+  .list .emp{flex-direction:column;align-items:stretch;gap:8px;min-height:104px}
+  .list .emp .st{display:flex;align-items:center;gap:8px;margin-top:auto}
+}
+.emp .st{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.emp .nm,.emp .wp{overflow-wrap:anywhere}
+.sbox{position:relative;flex:2 !important;min-width:200px !important}
+.sbox input{padding-left:40px;font-size:17px;height:48px;border-width:2px}
+.sbox svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--sub);pointer-events:none}
+.hit{font-size:13px;color:var(--sub);margin:-4px 0 10px}
+@media (max-width:639px){.sbox{flex:1 1 100% !important}}
 .emp{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;cursor:pointer;text-align:left;width:100%}
 .emp:hover{border-color:var(--accent)}
 .emp.off{cursor:default;opacity:.6}.emp.off:hover{border-color:var(--line)}
@@ -140,12 +154,13 @@ function calc(items, ded){
   const rank = total>=90?'S':total>=80?'A':total>=70?'B':total>=60?'C':'D';
   return {plus, minus, total, rank};
 }
+const norm = t => String(t||'').normalize('NFKC').replace(/[\s　]/g,'').replace(/[\u30a1-\u30f6]/g, c=>String.fromCharCode(c.charCodeAt(0)-0x60)).toLowerCase();
 const empSub = e => [e.workplace, e.position].filter(Boolean).join('・');
 const f1 = n => (Math.round(Number(n)*10)/10).toFixed(1);
 
 // ===================== 共通 =====================
 const $app = document.getElementById('app');
-const st = {pass:null, token:null, mode:null, ev:null, list:null, q:'', wp:'', adm:null, admTab:'eval', admPeriod:null, aq:'', awp:'', ast:''};
+const st = {pass:null, token:null, mode:null, ev:null, list:null, q:'', wp:'', ust:'', adm:null, admTab:'eval', admPeriod:null, aq:'', awp:'', ast:''};
 function save(){ try{ sessionStorage.setItem('bonus_s', JSON.stringify({pass:st.pass, token:st.token, mode:st.mode, ev:st.ev})); }catch(e){} }
 function load(){ try{ const o = JSON.parse(sessionStorage.getItem('bonus_s')||'null'); if(o){ st.pass=o.pass; st.token=o.token; st.mode=o.mode; st.ev=o.ev; } }catch(e){} }
 function logout(){ if (st.token) rpc('bonus_logout', {p_token:st.token}).catch(()=>{}); st.pass=st.token=st.mode=st.ev=st.list=st.adm=null; try{ sessionStorage.removeItem('bonus_s'); }catch(e){} showLogin(); }
@@ -228,31 +243,37 @@ function showList(refresh=true){ guard(async()=>{
   const wps = [...new Set(L.employees.map(e=>e.workplace).filter(Boolean))];
   const done = L.employees.filter(e=>e.mine).length;
   const fixed = L.employees.filter(e=>e.result).length;
-  $app.innerHTML = topBar() + `<main>
+  $app.innerHTML = topBar() + `<main class="wide">
     <div class="card"><h2>${esc(L.period.name)}</h2>
       <p class="sub">対象者を選んで評価を入力してください。自分が評価した対象者は、3名（マネージャー・次長・事業部）の評価が揃うと結果を閲覧できます。</p>
       <div class="stats mt"><div class="stat"><b>${done}</b><span>入力済み</span></div><div class="stat"><b>${fixed}</b><span>結果確定</span></div></div>
     </div>
     <div class="row" style="margin-bottom:12px">
-      <input type="search" id="q" placeholder="名前で検索" value="${esc(st.q)}">
+      <label class="sbox"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <input type="search" id="q" placeholder="名前で検索（例：山田）" value="${esc(st.q)}" autocomplete="off" aria-label="名前で検索"></label>
       ${wps.length?`<select id="wp"><option value="">すべての事業所</option>${wps.map(w=>`<option ${w===st.wp?'selected':''}>${esc(w)}</option>`).join('')}</select>`:''}
+      <select id="ust"><option value="">すべての状況</option><option value="todo" ${st.ust==='todo'?'selected':''}>未入力のみ</option><option value="wait" ${st.ust==='wait'?'selected':''}>入力済（評価待ち）</option><option value="done" ${st.ust==='done'?'selected':''}>結果確定</option></select>
     </div>
+    <p class="hit" id="hit"></p>
     <div class="list" id="rows"></div></main>`;
   bindTop();
   $('q').oninput = e=>{ st.q = e.target.value; renderRows(); };
   if ($('wp')) $('wp').onchange = e=>{ st.wp = e.target.value; renderRows(); };
+  $('ust').onchange = e=>{ st.ust = e.target.value; renderRows(); };
   renderRows();
 });}
 function renderRows(){
-  const L = st.list, q = st.q.trim();
-  const rows = L.employees.filter(e=>(!q || e.name.includes(q)) && (!st.wp || e.workplace===st.wp));
+  const L = st.list, q = norm(st.q);
+  const stOf = e => e.result ? 'done' : e.mine ? 'wait' : (e.taken ? 'other' : 'todo');
+  const rows = L.employees.filter(e=>(!q || norm(e.name).includes(q)) && (!st.wp || e.workplace===st.wp) && (!st.ust || stOf(e)===st.ust));
+  $('hit').textContent = `${rows.length}名を表示中（全${L.employees.length}名）`;
   $('rows').innerHTML = rows.length ? rows.map(e=>{
     let right;
     if (e.result){ const c = calc(e.result.items, e.result.ded); right = `<span class="muted" style="font-size:14px">${f1(c.total)}点</span><b class="rk ${c.rank}">${c.rank}</b>`; }
     else if (e.mine) right = `<span class="badge">入力済・他の評価待ち</span>`;
     else if (e.taken) right = `<span class="badge gray">他の${ROLES[L.role]}が担当</span>`;
     else right = `<span class="badge warn">未入力</span>`;
-    return `<button class="emp ${e.taken&&!e.mine?'off':''}" data-id="${e.id}"><span class="grow"><span class="nm">${esc(e.name)}</span><br><span class="wp">${esc(empSub(e))}</span></span>${right}</button>`;
+    return `<button class="emp ${e.taken&&!e.mine?'off':''}" data-id="${e.id}"><span class="grow"><span class="nm">${esc(e.name)}</span><br><span class="wp">${esc(empSub(e))}</span></span><span class="st">${right}</span></button>`;
   }).join('') : '<p class="muted">該当する対象者がいません</p>';
   $('rows').querySelectorAll('.emp').forEach(b=>b.onclick = ()=>{
     const e = L.employees.find(x=>x.id===Number(b.dataset.id));
